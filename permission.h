@@ -1,6 +1,6 @@
 /*
 
-Permission DB - Types.
+Permission DB - Permission.
 
 Copyright (C) 2018 Sergey Kolevatov
 
@@ -19,19 +19,23 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8778 $ $Date:: 2018-03-16 #$ $Author: serge $
+// $Revision: 8775 $ $Date:: 2018-03-16 #$ $Author: serge $
 
-#ifndef LIB_PERMISSION_DB__TYPES_H
-#define LIB_PERMISSION_DB__TYPES_H
+#ifndef LIB_PERMISSION_DB__PERMISSION_H
+#define LIB_PERMISSION_DB__PERMISSION_H
 
-#include <cstdint>          // std::uint32_t
+#include <set>                  // std::set
+
+#include "types.h"              // product_id_t
 
 namespace permission_db
 {
 
-typedef uint32_t user_id_t;
-typedef uint32_t product_id_t;
+struct Permission
+{
+    std::set<product_id_t>      product_ids;
+};
 
 } // namespace permission_db
 
-#endif // LIB_PERMISSION_DB__TYPES_H
+#endif // LIB_PERMISSION_DB__PERMISSION_H

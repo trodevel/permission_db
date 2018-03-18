@@ -19,18 +19,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8747 $ $Date:: 2018-03-12 #$ $Author: serge $
+// $Revision: 8776 $ $Date:: 2018-03-16 #$ $Author: serge $
 
 #ifndef LIB_PERMISSION_DB__PERMISSION_DB_H
 #define LIB_PERMISSION_DB__PERMISSION_DB_H
 
-#include <set>              // std::set
 #include <vector>           // std::vector
 #include <mutex>            // std::mutex
 
-#include "product_db.h"     // ProductDB
-#include "status.h"         // Status
-
+#include "product_db.h"     // ProductDb
+#include "permission.h"     // Permission
 
 namespace permission_db
 {
@@ -41,9 +39,9 @@ public:
     PermissionDb();
 
     bool init(
-            uint32_t            log_id,
-            const std::string   & permission_db,
-            const std::string   & product_db );
+            uint32_t                    log_id,
+            const std::string           & permission_db,
+            const product_db::ProductDb * product_db );
 
     bool is_allowed(
             user_id_t           user_id,
@@ -52,17 +50,33 @@ public:
 
 private:
 
-    typedef std::map<user_id_t,std::set<product_id_t>>  MapUserIdToProductIdSet;
+    typedef std::map<user_id_t,Permission>  MapUserIdToPermission;
+
+    struct FlatPermission
+    {
+        user_id_t       user_id;
+        Permission      permission;
+    };
 
 private:
 
+    void parse_lines( const std::vector<std::string> & lines );
+
+    void process_line( const std::string & line );
+    void process_line( const FlatPermission & p );
+
+    FlatPermission to_flat_permission( const std::string & l );
+
+    Permission to_permission( const std::vector<std::string> & elems );
 
 private:
     mutable std::mutex      mutex_;
 
     uint32_t                log_id_;
 
-    MapUserIdToProductIdSet map_user_id_to_product_ids_;    // map: user id --> list of contact ids
+    MapUserIdToPermission   map_user_id_to_permission_;    // map: user id --> list of contact ids
+
+    const product_db::ProductDb     * product_db_;
 };
 
 } // namespace permission_db
