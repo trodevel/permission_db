@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8776 $ $Date:: 2018-03-16 #$ $Author: serge $
+// $Revision: 8786 $ $Date:: 2018-03-19 #$ $Author: serge $
 
 #ifndef LIB_PERMISSION_DB__PERMISSION_DB_H
 #define LIB_PERMISSION_DB__PERMISSION_DB_H
@@ -27,8 +27,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <vector>           // std::vector
 #include <mutex>            // std::mutex
 
-#include "product_db.h"     // ProductDb
-#include "permission.h"     // Permission
+#include "product_db/product_db.h"  // ProductDb
+#include "permission.h"             // Permission
+#include "request_params.h"         // RequestParams
 
 namespace permission_db
 {
@@ -43,10 +44,11 @@ public:
             const std::string           & permission_db,
             const product_db::ProductDb * product_db );
 
-    bool is_allowed(
+    bool is_permitted(
             user_id_t           user_id,
-            template_id_t       template_id,
-            lang_tools::lang_e  lang ) const;
+            const RequestParams & rp ) const;
+
+    const Permission * get_permission( user_id_t user_id ) const;
 
 private:
 
@@ -59,6 +61,14 @@ private:
     };
 
 private:
+
+    bool is_permitted_for_prod(
+            product_id_t        product_id,
+            const RequestParams & rp ) const;
+
+    bool is_permitted_for_prod(
+            const product_db::Product   * product,
+            const RequestParams         & rp ) const;
 
     void parse_lines( const std::vector<std::string> & lines );
 

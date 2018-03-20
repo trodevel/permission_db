@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8777 $ $Date:: 2018-03-16 #$ $Author: serge $
+// $Revision: 8785 $ $Date:: 2018-03-19 #$ $Author: serge $
 
 #include "permission_db.h"          // self
 
@@ -28,6 +28,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "utils/tokenizer_ext.h"    // tokenize_and_convert
 #include "utils/assert.h"           // ASSERT
 #include "utils/mutex_helper.h"     // MUTEX_SCOPE_LOCK
+
+#include "str_helper.h"             // StrHelper
 
 
 namespace permission_db
@@ -64,6 +66,74 @@ bool PermissionDb::init(
     return true;
 }
 
+bool PermissionDb::is_permitted(
+        user_id_t           user_id,
+        const RequestParams & rp ) const
+{
+    dummy_log_trace( log_id_, "is_permitted: user_id %u, %s", user_id, StrHelper::to_string( rp ).c_str() );
+
+    auto permission = get_permission( user_id );
+
+    if( permission == nullptr )
+    {
+        dummy_log_error( log_id_, "is_permitted: user_id %u not found", user_id );
+        return false;
+    }
+
+    dummy_log_debug( log_id_, "is_permitted: user_id %u, %u products available", user_id, permission->product_ids.size() );
+
+    for( auto prod_id : permission->product_ids )
+    {
+        if( is_permitted_for_prod( prod_id, rp ) )
+        {
+            dummy_log_info( log_id_, "is_permitted: user_id %u, %s - permitted (product id %u)", user_id, StrHelper::to_string( rp ).c_str(), prod_id );
+            return true;
+        }
+    }
+
+    dummy_log_info( log_id_, "is_permitted: user_id %u, template_id %u, lang %s - not permitted", user_id );
+
+    return false;
+}
+
+bool PermissionDb::is_permitted_for_prod(
+        product_id_t        product_id,
+        const RequestParams & rp ) const
+{
+    auto prod = product_db_->get_product( product_id );
+
+    if( prod == nullptr )
+    {
+        dummy_log_error( log_id_, "is_permitted: product id %u not found", product_id );
+        return false;
+    }
+
+    return is_permitted_for_prod( prod, rp );
+}
+
+bool PermissionDb::is_permitted_for_prod(
+        const product_db::Product   * product,
+        const RequestParams         & rp ) const
+{
+    if( product->langs.count( rp.lang ) == 0 )
+        return false;
+
+    if( product->template_ids.count( rp.template_id ) == 0 )
+        return false;
+
+    return true;
+}
+
+const Permission * PermissionDb::get_permission( user_id_t user_id ) const
+{
+    auto it = map_user_id_to_permission_.find( user_id );
+
+    if( it == map_user_id_to_permission_.end() )
+        return nullptr;
+
+    return & it->second;
+}
+
 void PermissionDb::parse_lines( const std::vector<std::string> & lines )
 {
     for( auto & l : lines )
@@ -85,7 +155,7 @@ void PermissionDb::process_line( const FlatPermission & e )
 
     if( b == false )
     {
-        throw std::runtime_error( "duplicate permission id " + std::to_string( e.user_id ) );
+        throw std::runtime_error( "duplicate user id " + std::to_string( e.user_id ) );
     }
 }
 
