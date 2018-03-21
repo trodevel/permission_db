@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8785 $ $Date:: 2018-03-19 #$ $Author: serge $
+// $Revision: 8797 $ $Date:: 2018-03-20 #$ $Author: serge $
 
 #include "permission_db.h"          // self
 
@@ -134,6 +134,30 @@ const Permission * PermissionDb::get_permission( user_id_t user_id ) const
     return & it->second;
 }
 
+const std::vector<const product_db::Product*> PermissionDb::get_products( user_id_t user_id ) const
+{
+    std::vector<const product_db::Product*> res;
+
+    auto permission = get_permission( user_id );
+
+    if( permission == nullptr )
+    {
+        return res;
+    }
+
+    for( auto p : permission->product_ids )
+    {
+        auto product = product_db_->get_product( p );
+
+        if( product )
+        {
+            res.push_back( product );
+        }
+    }
+
+    return res;
+}
+
 void PermissionDb::parse_lines( const std::vector<std::string> & lines )
 {
     for( auto & l : lines )
@@ -188,8 +212,10 @@ Permission PermissionDb::to_permission( const std::vector<std::string> & elems )
     // format: <user_id>;product_id_1 ... product_id_n;
     Permission res;
 
-    std::vector<product_id_t> templ_ids;
-    utils::tokenize_and_convert( templ_ids, elems[1], " " );
+    std::vector<product_id_t> prod_ids;
+    utils::tokenize_and_convert( prod_ids, elems[1], " " );
+
+    res.product_ids    = std::set<product_id_t>( prod_ids.begin(), prod_ids.end() );
 
     return res;
 }

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8783 $ $Date:: 2018-03-19 #$ $Author: serge $
+// $Revision: 8790 $ $Date:: 2018-03-20 #$ $Author: serge $
 
 #include "str_helper.h"             // self
 
@@ -43,6 +43,15 @@ std::ostream & StrHelper::write( std::ostream & os, const RequestParams & l )
     os << "template id: " << l.template_id << " lang: " << lang_tools::to_string( l.lang );
 
     return os;
+}
+
+std::string StrHelper::to_string( const Permission & l )
+{
+    std::stringstream os;
+
+    write( os, l );
+
+    return os.str();
 }
 
 std::string StrHelper::to_string( const RequestParams & l )

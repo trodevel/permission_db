@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8786 $ $Date:: 2018-03-19 #$ $Author: serge $
+// $Revision: 8789 $ $Date:: 2018-03-20 #$ $Author: serge $
 
 #ifndef LIB_PERMISSION_DB__PERMISSION_DB_H
 #define LIB_PERMISSION_DB__PERMISSION_DB_H
@@ -49,6 +49,7 @@ public:
             const RequestParams & rp ) const;
 
     const Permission * get_permission( user_id_t user_id ) const;
+    const std::vector<const product_db::Product*> get_products( user_id_t user_id ) const;
 
 private:
 
