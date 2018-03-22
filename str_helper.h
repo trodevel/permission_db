@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8803 $ $Date:: 2018-03-20 #$ $Author: serge $
+// $Revision: 8808 $ $Date:: 2018-03-21 #$ $Author: serge $
 
 #ifndef LIB_PERMISSION_DB__STR_HELPER_H
 #define LIB_PERMISSION_DB__STR_HELPER_H
@@ -45,6 +45,11 @@ public:
 } // namespace permission_db
 
 inline std::ostream& operator<<( std::ostream& os, const permission_db::Permission & l )
+{
+    return permission_db::StrHelper::write( os, l );
+}
+
+inline std::ostream& operator<<( std::ostream& os, const permission_db::RequestParams & l )
 {
     return permission_db::StrHelper::write( os, l );
 }

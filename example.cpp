@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8806 $ $Date:: 2018-03-20 #$ $Author: serge $
+// $Revision: 8813 $ $Date:: 2018-03-21 #$ $Author: serge $
 
 #include <cstdio>
 #include <sstream>                          // std::stringstream
@@ -114,6 +114,74 @@ void test_05( permission_db::PermissionDb & perm_db )
     std::cout << "05" << " - finished" << std::endl;
 }
 
+void test_permission( const char * name, permission_db::RequestParams & rp, permission_db::user_id_t user_id, permission_db::PermissionDb & perm_db, bool expected )
+{
+    std::cout << name << " - started" << std::endl;
+
+    auto is_permitted = perm_db.is_permitted( user_id, rp );
+
+    if( is_permitted == expected )
+    {
+        std::string suffix;
+
+        if( expected == false )
+            suffix = "not ";
+
+        std::cout << "OK: request (" << rp << ") is " << suffix << "permitted for user id " << user_id << std::endl;
+    }
+    else
+    {
+        std::string suffix  = "NOT ";
+
+        if( expected == true )
+            suffix = "";
+
+        std::cout << "ERROR: request (" << rp << ") is unexpectedly " << suffix << " permitted for user id " << user_id << std::endl;
+    }
+
+    std::cout << name << " - finished" << std::endl;
+}
+
+void test_06( permission_db::PermissionDb & perm_db )
+{
+    permission_db::RequestParams    rp  = { 1, lang_tools::lang_e::EN };
+    permission_db::user_id_t        user_id = 12121212;
+
+    test_permission( "06", rp, user_id, perm_db, true );
+}
+
+void test_07( permission_db::PermissionDb & perm_db )
+{
+    permission_db::RequestParams    rp  = { 1, lang_tools::lang_e::RU };
+    permission_db::user_id_t        user_id = 12121212;
+
+    test_permission( "07", rp, user_id, perm_db, false );
+}
+
+void test_08( permission_db::PermissionDb & perm_db )
+{
+    permission_db::RequestParams    rp  = { 1, lang_tools::lang_e::EN };
+    permission_db::user_id_t        user_id = 23232323;
+
+    test_permission( "08", rp, user_id, perm_db, false );
+}
+
+void test_09( permission_db::PermissionDb & perm_db )
+{
+    permission_db::RequestParams    rp  = { 1, lang_tools::lang_e::EN };
+    permission_db::user_id_t        user_id = 77777777;
+
+    test_permission( "09", rp, user_id, perm_db, false );
+}
+
+void test_10( permission_db::PermissionDb & perm_db )
+{
+    permission_db::RequestParams    rp  = { 77777777, lang_tools::lang_e::EN };
+    permission_db::user_id_t        user_id = 23232323;
+
+    test_permission( "10", rp, user_id, perm_db, false );
+}
+
 int main()
 {
     try
@@ -136,6 +204,11 @@ int main()
         test_03( perm_db );
         test_04( perm_db );
         test_05( perm_db );
+        test_06( perm_db );
+        test_07( perm_db );
+        test_08( perm_db );
+        test_09( perm_db );
+        test_10( perm_db );
 
         return EXIT_SUCCESS;
     }

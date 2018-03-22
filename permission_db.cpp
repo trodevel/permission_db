@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8797 $ $Date:: 2018-03-20 #$ $Author: serge $
+// $Revision: 8812 $ $Date:: 2018-03-21 #$ $Author: serge $
 
 #include "permission_db.h"          // self
 
@@ -91,7 +91,7 @@ bool PermissionDb::is_permitted(
         }
     }
 
-    dummy_log_info( log_id_, "is_permitted: user_id %u, template_id %u, lang %s - not permitted", user_id );
+    dummy_log_info( log_id_, "is_permitted: user_id %u, %s - not permitted", user_id, StrHelper::to_string( rp ).c_str() );
 
     return false;
 }
