@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8812 $ $Date:: 2018-03-21 #$ $Author: serge $
+// $Revision: 8826 $ $Date:: 2018-03-22 #$ $Author: serge $
 
 #include "permission_db.h"          // self
 
@@ -191,13 +191,15 @@ PermissionDb::FlatPermission PermissionDb::to_flat_permission( const std::string
     std::vector< std::string > elems;
     tokenize_to_vector( elems, l, ";" );
 
-    if( elems.size() < 2 )
-        throw std::runtime_error( "not enough arguments (<2) in entry: " + l  );
+    if( elems.size() < 1 )
+        throw std::runtime_error( "not enough arguments (<1) in entry: " + l  );
 
     try
     {
-        res.user_id         = std::stoi( elems[0] );
-        res.permission      = to_permission( elems );
+        res.user_id         = std::stoul( elems[0] );
+
+        if( elems.size() > 1 )
+            res.permission      = to_permission( elems );
     }
     catch( std::exception & e )
     {
