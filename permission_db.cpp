@@ -19,14 +19,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8826 $ $Date:: 2018-03-22 #$ $Author: serge $
+// $Revision: 10612 $ $Date:: 2019-03-10 #$ $Author: serge $
 
 #include "permission_db.h"          // self
 
 #include "utils/dummy_logger.h"     // dummy_log_debug
 #include "utils/read_config_file.h" // utils::read_config_file
 #include "utils/tokenizer_ext.h"    // tokenize_and_convert
-#include "utils/assert.h"           // ASSERT
+#include "utils/utils_assert.h"           // ASSERT
 #include "utils/mutex_helper.h"     // MUTEX_SCOPE_LOCK
 
 #include "str_helper.h"             // StrHelper
