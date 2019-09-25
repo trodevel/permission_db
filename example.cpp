@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-// $Revision: 8813 $ $Date:: 2018-03-21 #$ $Author: serge $
+// $Revision: 12038 $ $Date:: 2019-09-25 #$ $Author: serge $
 
 #include <cstdio>
 #include <sstream>                          // std::stringstream
@@ -186,7 +186,7 @@ int main()
 {
     try
     {
-        dummy_logger::set_log_level( log_levels_log4j::DEBUG );
+        dummy_logger::set_log_level( log_levels_log4j::Debug );
 
         auto log_id_prod        = dummy_logger::register_module( "ProductDb" );
         auto log_id             = dummy_logger::register_module( "PermissionDb" );
